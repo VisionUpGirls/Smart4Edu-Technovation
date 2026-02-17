@@ -240,7 +240,7 @@ fun SignUpScreen(navController: NavController, modifier: Modifier = Modifier) {
         Text(
             text = "Sign Up (coming soon)",
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.BoldHello
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
