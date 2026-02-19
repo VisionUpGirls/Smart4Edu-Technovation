@@ -2,7 +2,6 @@ package com.example.technovation
 
 import java.net.URLEncoder
 import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 
 object Routes {
     const val LOGIN = "login"
@@ -17,21 +16,21 @@ object Routes {
     const val HELP = "help"
     const val ABOUT = "about"
 
-    // NEW: practice submenu + topic routes
+    // --- Practice nested routes ---
     const val PRACTICE_MENU = "practice_menu/{subject}"
     const val PRACTICE_TOPIC = "practice_topic/{subject}/{topic}"
+    const val PRACTICE_QUIZ = "practice_quiz/{subject}/{topic}"
 
-    fun practiceMenuRoute(subject: String): String {
-        val s = URLEncoder.encode(subject, StandardCharsets.UTF_8.toString())
-        return "practice_menu/$s"
-    }
+    // Helpers to build routes safely
+    fun practiceMenuRoute(subject: String): String =
+        "practice_menu/${encode(subject)}"
 
-    fun practiceTopicRoute(subject: String, topic: String): String {
-        val s = URLEncoder.encode(subject, StandardCharsets.UTF_8.toString())
-        val t = URLEncoder.encode(topic, StandardCharsets.UTF_8.toString())
-        return "practice_topic/$s/$t"
-    }
+    fun practiceTopicRoute(subject: String, topic: String): String =
+        "practice_topic/${encode(subject)}/${encode(topic)}"
 
-    fun decodeArg(value: String): String =
-        URLDecoder.decode(value, StandardCharsets.UTF_8.toString())
+    fun practiceQuizRoute(subject: String, topic: String): String =
+        "practice_quiz/${encode(subject)}/${encode(topic)}"
+
+    fun decodeArg(arg: String): String = URLDecoder.decode(arg, "UTF-8")
+    private fun encode(s: String): String = URLEncoder.encode(s, "UTF-8")
 }

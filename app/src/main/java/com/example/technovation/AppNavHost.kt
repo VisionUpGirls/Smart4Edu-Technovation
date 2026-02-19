@@ -3,10 +3,10 @@ package com.example.technovation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.NavType
 
 @Composable
 fun AppNavHost(
@@ -23,7 +23,6 @@ fun AppNavHost(
         startDestination = if (isLoggedIn) Routes.HOME else Routes.LOGIN,
         modifier = modifier
     ) {
-        // Auth
         composable(Routes.LOGIN) {
             LoginScreen(
                 navController = navController,
@@ -31,55 +30,52 @@ fun AppNavHost(
             )
         }
 
-        composable(Routes.SIGNUP) {
-            SignUpScreen(navController = navController)
-        }
+        composable(Routes.SIGNUP) { SignUpScreen(navController = navController) }
 
-        // Main tabs
         composable(Routes.HOME) {
             HomeScreen(navController = navController, username = username)
         }
 
-        composable(Routes.PRACTICE) {
-            PracticeScreen(navController = navController)
-        }
+        composable(Routes.PRACTICE) { PracticeScreen(navController = navController) }
+        composable(Routes.CALM) { CalmScreen(navController = navController) }
+        composable(Routes.CHAT) { ChatScreen(navController = navController) }
+        composable(Routes.PROGRESS) { ProgressScreen(navController = navController) }
 
-        composable(Routes.CALM) {
-            CalmScreen(navController = navController)
-        }
-
-        composable(Routes.CHAT) {
-            ChatScreen(navController = navController)
-        }
-
-        composable(Routes.PROGRESS) {
-            ProgressScreen(navController = navController)
-        }
-
-        // NEW: Practice subject menu (submenu)
+        // ✅ NEW: Practice menu (subject)
         composable(
             route = Routes.PRACTICE_MENU,
             arguments = listOf(navArgument("subject") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val subjectRaw = backStackEntry.arguments?.getString("subject").orEmpty()
-            val subject = Routes.decodeArg(subjectRaw)
+        ) { backStack ->
+            val subject = Routes.decodeArg(backStack.arguments?.getString("subject") ?: "")
             PracticeMenuScreen(navController = navController, subject = subject)
         }
 
-        // NEW: Practice topic screen (placeholder)
+        // ✅ NEW: Practice topic screen
         composable(
             route = Routes.PRACTICE_TOPIC,
             arguments = listOf(
                 navArgument("subject") { type = NavType.StringType },
                 navArgument("topic") { type = NavType.StringType }
             )
-        ) { backStackEntry ->
-            val subject = Routes.decodeArg(backStackEntry.arguments?.getString("subject").orEmpty())
-            val topic = Routes.decodeArg(backStackEntry.arguments?.getString("topic").orEmpty())
+        ) { backStack ->
+            val subject = Routes.decodeArg(backStack.arguments?.getString("subject") ?: "")
+            val topic = Routes.decodeArg(backStack.arguments?.getString("topic") ?: "")
             PracticeTopicScreen(navController = navController, subject = subject, topic = topic)
         }
 
-        // Drawer screens
+        // ✅ NEW: Quiz screen
+        composable(
+            route = Routes.PRACTICE_QUIZ,
+            arguments = listOf(
+                navArgument("subject") { type = NavType.StringType },
+                navArgument("topic") { type = NavType.StringType }
+            )
+        ) { backStack ->
+            val subject = Routes.decodeArg(backStack.arguments?.getString("subject") ?: "")
+            val topic = Routes.decodeArg(backStack.arguments?.getString("topic") ?: "")
+            PracticeQuizScreen(navController = navController, subject = subject, topic = topic)
+        }
+
         composable(Routes.SETTINGS) {
             SettingScreen(
                 navController = navController,
@@ -88,12 +84,7 @@ fun AppNavHost(
             )
         }
 
-        composable(Routes.HELP) {
-            HelpScreen(navController = navController)
-        }
-
-        composable(Routes.ABOUT) {
-            AboutScreen(navController = navController)
-        }
+        composable(Routes.HELP) { HelpScreen(navController = navController) }
+        composable(Routes.ABOUT) { AboutScreen(navController = navController) }
     }
 }
