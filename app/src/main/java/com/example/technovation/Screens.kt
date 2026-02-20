@@ -1550,7 +1550,7 @@ private fun romanianQuiz(topic: String): List<QuizQuestion> {
             correctIndex = 2,
             explanation = "Plural corect: „Nopțile sunt liniștite.”"
         )
-        "Rezumat" -> base + QuizQuestion(
+         "Rezumat" -> base + QuizQuestion(
             prompt = "În rezumat trebuie să eviți:",
             options = listOf(
                 "Ideile principale",
