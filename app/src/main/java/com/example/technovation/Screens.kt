@@ -259,6 +259,7 @@ fun LoginScreen(
                         modifier = Modifier.size(34.dp),
                         tint = Color.Unspecified
                     )
+
                 },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.Black,
