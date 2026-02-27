@@ -32,6 +32,7 @@ private val LightColors = lightColorScheme(
     onSurface = Color(0xFF0F1220),
 )
 
+
 private val AppTypography = Typography()
 
 @Composable

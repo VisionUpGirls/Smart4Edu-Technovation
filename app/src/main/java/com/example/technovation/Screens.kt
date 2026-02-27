@@ -476,18 +476,24 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Stacked (not row)
-        StatCard(
-            title = "Streak",
-            value = "3 days",
-            hint = "Keep it going"
-        )
-        Spacer(Modifier.height(12.dp))
-        StatCard(
-            title = "Last score",
-            value = "78/100",
-            hint = "See Progress tab"
-        )
+        // CHANGED: Streak + Last score split vertically, shown next to each other
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            StatCard(
+                title = "Streak",
+                value = "3 days",
+                hint = "Keep it going",
+                modifier = Modifier.weight(1f)
+            )
+            StatCard(
+                title = "Last score",
+                value = "78/100",
+                hint = "See Progress tab",
+                modifier = Modifier.weight(1f)
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -1102,17 +1108,24 @@ fun ProgressScreen(navController: NavController, modifier: Modifier = Modifier) 
         Text("Latest results", fontWeight = FontWeight.SemiBold)
         Spacer(modifier = Modifier.height(12.dp))
 
-        ResultBlock(
-            title = "Matematică",
-            score = latestMathScore,
-            hint = "Based on your last quiz"
-        )
-        Spacer(Modifier.height(12.dp))
-        ResultBlock(
-            title = "Română",
-            score = latestRomanianScore,
-            hint = "Based on your last quiz"
-        )
+        // CHANGED: latest results for Matematică and Română at the top, side-by-side, vertical
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            ResultBlock(
+                title = "Matematică",
+                score = latestMathScore,
+                hint = "Based on your last quiz",
+                modifier = Modifier.weight(1f)
+            )
+            ResultBlock(
+                title = "Română",
+                score = latestRomanianScore,
+                hint = "Based on your last quiz",
+                modifier = Modifier.weight(1f)
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -1149,9 +1162,10 @@ fun ProgressScreen(navController: NavController, modifier: Modifier = Modifier) 
 private fun ResultBlock(
     title: String,
     score: Int,
-    hint: String
+    hint: String,
+    modifier: Modifier = Modifier
 ) {
-    CardSurface {
+    CardSurface(modifier = modifier) {
         Text(title, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
         Spacer(Modifier.height(10.dp))
         Text(
@@ -1550,7 +1564,7 @@ private fun romanianQuiz(topic: String): List<QuizQuestion> {
             correctIndex = 2,
             explanation = "Plural corect: „Nopțile sunt liniștite.”"
         )
-         "Rezumat" -> base + QuizQuestion(
+        "Rezumat" -> base + QuizQuestion(
             prompt = "În rezumat trebuie să eviți:",
             options = listOf(
                 "Ideile principale",
