@@ -614,7 +614,7 @@ fun AboutScreen(navController: NavController, modifier: Modifier = Modifier) {
             Spacer(Modifier.height(6.dp))
             Text("An app to support Evaluarea Națională practice and progress tracking.")
             Spacer(Modifier.height(10.dp))
-            Text("Version: 1.3.5", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.80f))
+            Text("Version: 1.3.6", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.80f))
         }
     }
 }
