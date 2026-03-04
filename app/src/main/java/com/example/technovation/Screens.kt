@@ -394,16 +394,20 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val tips = listOf(
-        "Start with 10 minutes. Starting is the hardest part.",
-        "Use 25 minutes focus + 5 minutes break.",
-        "Do one small task at a time: one lesson, one topic.",
-        "Close notes and explain it in your own words.",
-        "Mistakes are data: review and write the correct method.",
-        "Sleep helps memory. Don’t sacrifice it before a test.",
-        "Silence notifications for 20–30 minutes while studying.",
-        "Practice beats rereading: solve, then check solutions.",
-        "If stuck, take a short walk and come back.",
-        "Consistency wins: a little daily beats cramming."
+        "Nu trebuie să fii grozav ca să începi. Trebuie să începi ca să devii grozav.",
+        "Fiecare exercițiu rezolvat azi e un punct câștigat mâine.",
+        "Oboseala trece. Mândria rămâne.",
+        "Notele nu te definesc, dar munca ta te reprezintă.",
+        "Dacă azi înveți când nu ai chef, mâine vei reuși când contează.",
+        "Învață în timp ce alții dorm; muncește în timp ce alții lenevesc; pregătește-te în timp ce alții se joacă și visează în timp ce alții doar își doresc. – William A. Ward",
+        "Totul pare imposibil până când este făcut. – Nelson Mandela",
+        "Crede că poți și ești deja la jumătatea drumului. – Theodore Roosevelt",
+        "Nimic nu este imposibil. Cuvântul în sine spune: «Sunt posibil»! – Audrey Hepburn",
+        "Ai încredere în tine. Știi mai multe decât crezi că știi. – Benjamin Spock",
+        "Educația este cea mai puternică armă pe care o poți folosi pentru a schimba lumea. – Nelson Mandela",
+        "Investiția în cunoaștere plătește cea mai bună dobândă. – Benjamin Franklin",
+        "Pregătirea corectă previne performanța slabă. – Stephen Keague",
+        "Nu lăsa ceea ce nu poți face să interfereze cu ceea ce poți face. – John Wooden"
     )
 
     val dayIndex = remember {
