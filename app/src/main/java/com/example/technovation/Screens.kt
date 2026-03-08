@@ -1,5 +1,4 @@
 package com.example.technovation
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -50,10 +49,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlin.math.abs
-
-/* ============================================================
-   GLOBAL UI HELPERS (FIXED: NO OVERLAP)
-   ============================================================ */
 
 @Composable
 private fun ScreenColumn(
