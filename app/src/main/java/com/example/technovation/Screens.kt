@@ -604,7 +604,6 @@ fun HelpScreen(navController: NavController, modifier: Modifier = Modifier) {
     }
 }
 
-
 @Composable
 fun AboutScreen(navController: NavController, modifier: Modifier = Modifier) {
     ScreenColumn(
