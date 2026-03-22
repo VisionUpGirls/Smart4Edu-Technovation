@@ -76,40 +76,44 @@ class MainActivity : ComponentActivity() {
             val isDarkMode by themePrefs.isDarkThemeFlow.collectAsState(initial = false)
             val lang by settingsPrefs.languageFlow.collectAsState(initial = "ro")
 
+            var isLoggedIn by remember { mutableStateOf(false) }
+            var username by remember { mutableStateOf("") }
+
+            val navController = rememberNavController()
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+            val backStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = backStackEntry?.destination?.route
+
+            val showChrome = currentRoute !in setOf(Routes.LOGIN, Routes.SIGNUP)
+
             TechnovationTheme(darkTheme = isDarkMode) {
-                val navController = rememberNavController()
-
-                var isLoggedIn by remember { mutableStateOf(false) }
-                var username by remember { mutableStateOf("") }
-
-                val backStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute = backStackEntry?.destination?.route
-                val showChrome = currentRoute !in setOf(Routes.LOGIN, Routes.SIGNUP)
-
-                val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
                 ModalNavigationDrawer(
                     drawerState = drawerState,
                     drawerContent = {
-                        ModalDrawerSheet(modifier = Modifier.widthIn(max = 260.dp)) {
-                            DrawerContent(
-                                lang = lang,
-                                username = username,
-                                currentRoute = currentRoute,
-                                onNavigate = { route ->
-                                    scope.launch { drawerState.close() }
-                                    navController.navigate(route) { launchSingleTop = true }
-                                },
-                                onLogout = {
-                                    scope.launch { drawerState.close() }
-                                    isLoggedIn = false
-                                    username = ""
-                                    navController.navigate(Routes.LOGIN) {
-                                        popUpTo(Routes.HOME) { inclusive = true }
-                                        launchSingleTop = true
+                        if (showChrome) {
+                            ModalDrawerSheet(modifier = Modifier.widthIn(max = 260.dp)) {
+                                DrawerContent(
+                                    lang = lang,
+                                    username = username,
+                                    currentRoute = currentRoute,
+                                    onNavigate = { route ->
+                                        scope.launch { drawerState.close() }
+                                        navController.navigate(route) {
+                                            launchSingleTop = true
+                                        }
+                                    },
+                                    onLogout = {
+                                        scope.launch { drawerState.close() }
+                                        isLoggedIn = false
+                                        username = ""
+                                        navController.navigate(Routes.LOGIN) {
+                                            popUpTo(0) { inclusive = true }
+                                            launchSingleTop = true
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 ) {
@@ -118,36 +122,36 @@ class MainActivity : ComponentActivity() {
                             if (showChrome) {
                                 CenterAlignedTopAppBar(
                                     title = {
-                                        Text(
-                                            text = when (currentRoute) {
-                                                Routes.HOME -> if (lang == "ro") "Acasă" else "Home"
-                                                Routes.PRACTICE -> if (lang == "ro") "Practică" else "Practice"
-                                                Routes.CALM -> "Calm"
-                                                Routes.CHAT -> "Chat"
-                                                Routes.PROGRESS -> if (lang == "ro") "Progres" else "Progress"
-                                                Routes.SETTINGS -> if (lang == "ro") "Setări" else "Settings"
-                                                Routes.HELP -> if (lang == "ro") "Ajutor" else "Help"
-                                                Routes.ABOUT -> if (lang == "ro") "Despre" else "About"
-                                                else -> "Smart4Edu"
-                                            }
-                                        )
+                                        Text(text = topBarTitle(currentRoute, lang))
                                     },
                                     navigationIcon = {
-                                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                        IconButton(
+                                            onClick = { scope.launch { drawerState.open() } }
+                                        ) {
                                             Icon(
                                                 painter = painterResource(id = R.drawable.ic_username),
                                                 contentDescription = "Open drawer",
                                                 tint = Color.Unspecified,
-                                                modifier = Modifier.size(34.dp).clip(CircleShape)
+                                                modifier = Modifier
+                                                    .size(34.dp)
+                                                    .clip(CircleShape)
                                             )
                                         }
                                     },
                                     actions = {
                                         IconButton(
-                                            onClick = { scope.launch { themePrefs.setDarkTheme(!isDarkMode) } }
+                                            onClick = {
+                                                scope.launch {
+                                                    themePrefs.setDarkTheme(!isDarkMode)
+                                                }
+                                            }
                                         ) {
                                             Icon(
-                                                imageVector = if (isDarkMode) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                                                imageVector = if (isDarkMode) {
+                                                    Icons.Filled.LightMode
+                                                } else {
+                                                    Icons.Filled.DarkMode
+                                                },
                                                 contentDescription = "Toggle theme"
                                             )
                                         }
@@ -180,7 +184,9 @@ class MainActivity : ComponentActivity() {
                             lang = lang,
                             onToggleLanguage = {
                                 scope.launch {
-                                    settingsPrefs.setLanguage(if (lang == "ro") "en" else "ro")
+                                    settingsPrefs.setLanguage(
+                                        if (lang == "ro") "en" else "ro"
+                                    )
                                 }
                             },
                             modifier = Modifier.padding(innerPadding)
@@ -205,15 +211,24 @@ private fun DrawerContent(
             painter = painterResource(id = R.drawable.ic_username),
             contentDescription = null,
             tint = Color.Unspecified,
-            modifier = Modifier.size(44.dp).clip(CircleShape)
+            modifier = Modifier
+                .size(44.dp)
+                .clip(CircleShape)
         )
+
         Spacer(modifier = Modifier.width(12.dp))
+
         Column {
             Text(
-                text = if (username.isBlank()) (if (lang == "ro") "Oaspete" else "Guest") else username,
+                text = if (username.isBlank()) {
+                    if (lang == "ro") "Oaspete" else "Guest"
+                } else {
+                    username
+                },
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
+
             Text(
                 text = if (lang == "ro") "Cont" else "Account",
                 style = MaterialTheme.typography.bodySmall,
@@ -224,25 +239,76 @@ private fun DrawerContent(
 
     Divider()
 
-    DrawerItem(if (lang == "ro") "Acasă" else "Home", Icons.Filled.Home, currentRoute == Routes.HOME) { onNavigate(Routes.HOME) }
-    DrawerItem(if (lang == "ro") "Practică" else "Practice", Icons.Filled.School, currentRoute == Routes.PRACTICE) { onNavigate(Routes.PRACTICE) }
-    DrawerItem("Calm", Icons.Filled.SelfImprovement, currentRoute == Routes.CALM) { onNavigate(Routes.CALM) }
-    DrawerItem("Chat", Icons.Filled.Chat, currentRoute == Routes.CHAT) { onNavigate(Routes.CHAT) }
-    DrawerItem(if (lang == "ro") "Progres" else "Progress", Icons.Filled.BarChart, currentRoute == Routes.PROGRESS) { onNavigate(Routes.PROGRESS) }
+    DrawerItem(
+        label = if (lang == "ro") "Acasă" else "Home",
+        icon = Icons.Filled.Home,
+        selected = currentRoute == Routes.HOME,
+        onClick = { onNavigate(Routes.HOME) }
+    )
+
+    DrawerItem(
+        label = if (lang == "ro") "Practică" else "Practice",
+        icon = Icons.Filled.School,
+        selected = currentRoute == Routes.PRACTICE,
+        onClick = { onNavigate(Routes.PRACTICE) }
+    )
+
+    DrawerItem(
+        label = "Calm",
+        icon = Icons.Filled.SelfImprovement,
+        selected = currentRoute == Routes.CALM,
+        onClick = { onNavigate(Routes.CALM) }
+    )
+
+    DrawerItem(
+        label = "Chat",
+        icon = Icons.Filled.Chat,
+        selected = currentRoute == Routes.CHAT,
+        onClick = { onNavigate(Routes.CHAT) }
+    )
+
+    DrawerItem(
+        label = if (lang == "ro") "Progres" else "Progress",
+        icon = Icons.Filled.BarChart,
+        selected = currentRoute == Routes.PROGRESS,
+        onClick = { onNavigate(Routes.PROGRESS) }
+    )
 
     Spacer(modifier = Modifier.height(8.dp))
     Divider()
     Spacer(modifier = Modifier.height(8.dp))
 
-    DrawerItem(if (lang == "ro") "Setări" else "Settings", Icons.Filled.Settings, currentRoute == Routes.SETTINGS) { onNavigate(Routes.SETTINGS) }
-    DrawerItem(if (lang == "ro") "Ajutor" else "Help", Icons.Filled.Help, currentRoute == Routes.HELP) { onNavigate(Routes.HELP) }
-    DrawerItem(if (lang == "ro") "Despre" else "About", Icons.Filled.Info, currentRoute == Routes.ABOUT) { onNavigate(Routes.ABOUT) }
+    DrawerItem(
+        label = if (lang == "ro") "Setări" else "Settings",
+        icon = Icons.Filled.Settings,
+        selected = currentRoute == Routes.SETTINGS,
+        onClick = { onNavigate(Routes.SETTINGS) }
+    )
+
+    DrawerItem(
+        label = if (lang == "ro") "Ajutor" else "Help",
+        icon = Icons.Filled.Help,
+        selected = currentRoute == Routes.HELP,
+        onClick = { onNavigate(Routes.HELP) }
+    )
+
+    DrawerItem(
+        label = if (lang == "ro") "Despre" else "About",
+        icon = Icons.Filled.Info,
+        selected = currentRoute == Routes.ABOUT,
+        onClick = { onNavigate(Routes.ABOUT) }
+    )
 
     Spacer(modifier = Modifier.height(8.dp))
     Divider()
     Spacer(modifier = Modifier.height(8.dp))
 
-    DrawerItem(if (lang == "ro") "Deconectare" else "Log out", Icons.Filled.Logout, false, onLogout)
+    DrawerItem(
+        label = if (lang == "ro") "Deconectare" else "Log out",
+        icon = Icons.Filled.Logout,
+        selected = false,
+        onClick = onLogout
+    )
 }
 
 @Composable
@@ -268,23 +334,64 @@ private fun AppBottomBar(
     lang: String
 ) {
     val items = listOf(
-        BottomItem(if (lang == "ro") "Practică" else "Practice", Routes.PRACTICE, Icons.Filled.School),
-        BottomItem("Calm", Routes.CALM, Icons.Filled.SelfImprovement),
-        BottomItem(if (lang == "ro") "Acasă" else "Home", Routes.HOME, Icons.Filled.Home),
-        BottomItem("Chat", Routes.CHAT, Icons.Filled.Chat),
-        BottomItem(if (lang == "ro") "Progres" else "Progress", Routes.PROGRESS, Icons.Filled.BarChart),
+        BottomItem(
+            label = if (lang == "ro") "Practică" else "Practice",
+            route = Routes.PRACTICE,
+            icon = Icons.Filled.School
+        ),
+        BottomItem(
+            label = "Calm",
+            route = Routes.CALM,
+            icon = Icons.Filled.SelfImprovement
+        ),
+        BottomItem(
+            label = if (lang == "ro") "Acasă" else "Home",
+            route = Routes.HOME,
+            icon = Icons.Filled.Home
+        ),
+        BottomItem(
+            label = "Chat",
+            route = Routes.CHAT,
+            icon = Icons.Filled.Chat
+        ),
+        BottomItem(
+            label = if (lang == "ro") "Progres" else "Progress",
+            route = Routes.PROGRESS,
+            icon = Icons.Filled.BarChart
+        )
     )
 
-    NavigationBar(containerColor = MaterialTheme.colorScheme.surface, tonalElevation = 0.dp) {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 0.dp
+    ) {
         items.forEach { item ->
             NavigationBarItem(
                 selected = currentRoute == item.route,
-                onClick = { navController.navigate(item.route) { launchSingleTop = true } },
+                onClick = {
+                    navController.navigate(item.route) {
+                        launchSingleTop = true
+                    }
+                },
                 icon = { Icon(item.icon, contentDescription = item.label) },
                 label = { Text(item.label, maxLines = 1) },
                 alwaysShowLabel = true
             )
         }
+    }
+}
+
+private fun topBarTitle(currentRoute: String?, lang: String): String {
+    return when (currentRoute) {
+        Routes.HOME -> if (lang == "ro") "Acasă" else "Home"
+        Routes.PRACTICE -> if (lang == "ro") "Practică" else "Practice"
+        Routes.CALM -> "Calm"
+        Routes.CHAT -> "Chat"
+        Routes.PROGRESS -> if (lang == "ro") "Progres" else "Progress"
+        Routes.SETTINGS -> if (lang == "ro") "Setări" else "Settings"
+        Routes.HELP -> if (lang == "ro") "Ajutor" else "Help"
+        Routes.ABOUT -> if (lang == "ro") "Despre" else "About"
+        else -> "Smart4Edu"
     }
 }
 

@@ -7,6 +7,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
+import com.example.technovation.screens.AboutScreen
+import com.example.technovation.screens.CalmScreen
+import com.example.technovation.screens.ChatScreen
+import com.example.technovation.screens.HelpScreen
+import com.example.technovation.screens.HomeScreen
+import com.example.technovation.screens.LoginScreen
+import com.example.technovation.screens.PracticeMenuScreen
+import com.example.technovation.screens.PracticeQuizScreen
+import com.example.technovation.screens.PracticeScreen
+import com.example.technovation.screens.PracticeTopicScreen
+import com.example.technovation.screens.ProgressScreen
+import com.example.technovation.screens.SettingsScreen
+import com.example.technovation.screens.SignUpScreen
 
 @Composable
 fun AppNavHost(
